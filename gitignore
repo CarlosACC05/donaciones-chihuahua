@@ -1,0 +1,26 @@
+# Entorno virtual - NUNCA subir al repositorio
+venv/
+env/
+.env/
+
+# Variables de entorno (contraseñas, claves secretas)
+.env
+*.env
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Editores de código
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
