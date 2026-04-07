@@ -10,11 +10,20 @@ app = Flask(__name__)
 # Conexion a MYSQL
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'carlos'
-app.config['MYSQL_PASSWORD'] = '123'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'donaciones'
 
 conexion = MySQL(app)
+
+
+def limpiar_categoria(cat):
+    cat = cat.split(",")[0]
+    cat = cat.lower()
+    cat = cat.replace(" ", "-")
+    cat = cat.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
+    return cat
+
 
 # Decoradores de ruta, sirven para que flask sepa que funciones
 # ejecutar cuando alguien entre en alguna ruta en especifico
@@ -28,7 +37,8 @@ def index():
         "Ropa",
         "Alimentos y Despensas",
         "Juguetes",
-        "Materiales de Construcción",
+        "Materiales para reciclar",
+        "Medicamentos",
         "Otros"
     ]
     
@@ -92,6 +102,13 @@ def index():
         print(centros)
 
         cursor.close()
+
+        centros = [
+        list(c) + [limpiar_categoria(c[7])]
+        for c in centros
+        ]
+        print(centros)
+
 
     except Exception as ex:
         print("ERROR SQL:", ex)

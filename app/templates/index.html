@@ -16,13 +16,14 @@
 
 {% for centro in centros %}
 
-<div class="card">
+<div class="card {{ centro[8] }}">
 
 <!-- Categorias de la dependencia -->
 <span class="tag">{{ centro[7] }}</span>
 
 <!-- Nombre de la dependencia -->
 <h2>{{ centro[1] }}</h2>
+
 
 <!-- Descripcion de la dependencia -->
 <h3>{{ centro[2] }}</h3>
@@ -31,10 +32,10 @@
 <p>{{ centro[3] }}</p>
 
 <!-- Telefono de la dependencia -->
-<p>{{ centro[4] }}</p>
+<p>{{ centro[4] | default("No disponible", true) }}</p>
 
 <!-- Correo de la dependencia -->
-<p>{{ centro[5] }}</p>
+<p>{{ centro[5] | default("No disponible", true) }}</p>
 
 <!-- Pagina de la dependencia -->
  
@@ -42,12 +43,33 @@
     <button class="btn-contacto">Contactar ahora</button>
 </a>
 
-<!-- <span class="prioridad">Alta prioridad</span> -->
+<button onclick="verUbicacion('{{ centro[3] }}')" class="btn-contacto">
+    Ver ubicación
+</button>
 
+<a href="https://www.google.com/maps/search/?api=1&query={{ centro[3] }}" target="_blank">
+    <button class="btn-contacto">Ir</button>
+</a>
+
+<!-- <span class="prioridad">Alta prioridad</span> -->
 
 </div>
 
 {% endfor %}
+
+<!--<div id="mapa-container" style="display:none; margin:20px;">
+    <div id="map" style="width:300%; height:600px;"></div>
+    <button onclick="cerrarMapa()">❌ Cerrar mapa</button>
+</div>-->
+
+<div id="mapa-overlay" class="mapa-overlay" onclick="cerrarMapa(event)"">
+    
+    <div class="mapa-contenido">
+        <span class="cerrar" onclick="cerrarMapa()">✖</span>
+        <div id="map"></div>
+    </div>
+
+</div>
 
 </div>
 {% endblock %}
