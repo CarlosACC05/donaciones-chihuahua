@@ -1,5 +1,6 @@
 # Se importa la clase flask de la propia libreria de flask, 
 # es la clase encargada de levantar la aplicacion, el servidor no funciona sin este importe.
+import os
 from flask import Flask, render_template, redirect, url_for, request
 from flask_mysqldb import MySQL
 
@@ -7,12 +8,13 @@ from flask_mysqldb import MySQL
 # le dice a flask donde esta ubicado el archivo principal y donde buscar recursos. Nunca cambia.
 app = Flask(__name__)
 
-# Conexion a MYSQL
+# Conexion a MYSQL — valores tomados de variables de entorno para compatibilidad con Railway.
+# En desarrollo local se usan los valores por defecto.
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'donaciones'
+app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', 'localhost')
+app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'root')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', 'root')
+app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB', 'donaciones')
 
 conexion = MySQL(app)
 
@@ -140,4 +142,5 @@ def encuesta():
     
 if __name__ == "__main__":
     app.register_error_handler(404, pagina_no_encontrada)
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
