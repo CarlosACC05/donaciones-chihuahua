@@ -115,7 +115,9 @@ def index():
 
 
     except Exception as ex:
-        raise ex
+        print("ERROR SQL:", ex)
+        data['mensaje'] = 'Error'
+        centros = []
 
     # 4) Mandar centros al HTML
     return render_template("index.html", data=data, centros=centros, api_key=app.config["API_KEY"])
