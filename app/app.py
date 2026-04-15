@@ -109,10 +109,9 @@ def index():
         cursor.close()
 
         centros = [
-        list(c) + [limpiar_categoria(c[7])]
+        list(c) + [limpiar_categoria(c[7] if c[7] else "")]
         for c in centros
         ]
-        print(centros)
 
 
     except Exception as ex:
