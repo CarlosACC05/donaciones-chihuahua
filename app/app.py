@@ -64,48 +64,8 @@ def index():
         cursor = conexion.connection.cursor()
 
 
-        if categoria and categoria != "Todas":
-
-            sql = """
-            SELECT 
-            centros.id_centro,
-            centros.nombre,
-            centros.descripcion,
-            centros.direccion,
-            centros.telefono,
-            centros.email,
-            centros.pagina_web,
-            categorias.nombre
-            FROM centros
-            JOIN centro_categoria 
-            ON centros.id_centro = centro_categoria.id_centro
-            JOIN categorias 
-            ON categorias.id_categoria = centro_categoria.id_categoria
-            WHERE categorias.nombre = %s
-            """
-
-            cursor.execute(sql, (categoria,))
-
-        else:
-
-            sql = """
-            SELECT 
-            centros.id_centro,
-            centros.nombre,
-            centros.descripcion,
-            centros.direccion,
-            centros.telefono,
-            centros.email,
-            centros.pagina_web,
-            GROUP_CONCAT(categorias.nombre SEPARATOR ', ') AS categorias
-            FROM centros
-            JOIN centro_categoria 
-            ON centros.id_centro = centro_categoria.id_centro
-            JOIN categorias 
-            ON categorias.id_categoria = centro_categoria.id_categoria
-            GROUP BY centros.id_centro
-            """
-            cursor.execute(sql)
+        sql = "SELECT * FROM centros"
+        cursor.execute(sql)
         centros = cursor.fetchall()
         print(centros)
 
@@ -123,7 +83,7 @@ def index():
         centros = []
 
     # Mandar centros al HTML
-    return render_template("index.html", data=data, centros=centros, api_key=app.config["API_KEY"])
+    return str(centros)
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
