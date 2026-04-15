@@ -5,7 +5,7 @@ load_dotenv()
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_mysqldb import MySQL
-from config import Config
+from .config import Config
 
 # Creacion de la instancia de aplicación, _name_ es una varible estatica especial de python
 # le dice a flask donde esta ubicado el archivo principal y donde buscar recursos. Nunca cambia.
