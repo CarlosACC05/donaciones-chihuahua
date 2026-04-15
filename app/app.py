@@ -123,7 +123,7 @@ def index():
         centros = []
 
     # Mandar centros al HTML
-    return str(centros, categorias)
+    return render_template("index.html", data=data, centros=centros, api_key=app.config["API_KEY"])
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
