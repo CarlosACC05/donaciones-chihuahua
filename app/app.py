@@ -119,8 +119,8 @@ def index():
         data['mensaje'] = 'Error'
         centros = []
 
-    # 4) Mandar centros al HTML
-    return render_template("index.html", data=data, centros=centros, api_key=app.config["API_KEY"])
+    # Mandar centros al HTML
+    return str(centros)
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
