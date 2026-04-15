@@ -123,7 +123,7 @@ def index():
         centros = []
 
     # Mandar centros al HTML
-    return str(centros)
+    return str(centros, categorias)
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
