@@ -56,7 +56,10 @@ def index():
 
     # Si existe un parametro llamado categoria en la url lo captura en categoria y lo imprime en la terminal
     categoria = request.args.get("categoria")
-    print("CATEGORIA RAW:", categoria)
+
+    if categoria:
+        categoria = categoria.strip()
+        
     try:
         cursor = conexion.connection.cursor()
 
