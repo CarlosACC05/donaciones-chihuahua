@@ -35,15 +35,11 @@ def limpiar_categoria(cat):
 @app.route("/")
 # Funcion normal de python, lo que sea que esta funcion haga es lo que vera el usuario en el navegador
 def index():
-    cursor = conexion.connection.cursor()
-
-    cursor.execute("SELECT DATABASE();")
-    db = cursor.fetchone()
-
-    cursor.execute("SELECT COUNT(*) FROM centros;")
-    count = cursor.fetchone()
-
-    return f"DB: {db} | COUNT: {count}"
+    try:
+        cursor = conexion.connection.cursor()
+        return "Conectado a MySQL"
+    except Exception as e:
+        return f"Error conexión: {e}"
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
