@@ -35,55 +35,15 @@ def limpiar_categoria(cat):
 @app.route("/")
 # Funcion normal de python, lo que sea que esta funcion haga es lo que vera el usuario en el navegador
 def index():
-    # return '<h1 style="color: blue;">Hola Carlos, tu servidor Flask está funcionando.<h1>'
-    categorias = [
-        "Todas",
-        "Donaciones Económicas",
-        "Ropa",
-        "Alimentos y Despensas",
-        "Juguetes",
-        "Materiales para reciclar",
-        "Medicamentos",
-        "Otros"
-    ]
-    
-    data = {
-        'titulo': 'Despensas Bienestar',
-        'bienvenida': 'Bienvenido a Despensas Bienestar',
-        'numero_botones': len(categorias),
-        'botones': categorias
-        }
+    cursor = conexion.connection.cursor()
 
-    # Si existe un parametro llamado categoria en la url lo captura en categoria y lo imprime en la terminal
-    categoria = request.args.get("categoria")
+    cursor.execute("SELECT DATABASE();")
+    db = cursor.fetchone()
 
-    if categoria:
-        categoria = categoria.strip()
-        
-    try:
-        cursor = conexion.connection.cursor()
+    cursor.execute("SELECT COUNT(*) FROM centros;")
+    count = cursor.fetchone()
 
-
-        sql = "SELECT * FROM centros"
-        cursor.execute(sql)
-        centros = cursor.fetchall()
-        print(centros)
-
-        cursor.close()
-
-        centros = [
-        list(c) + [limpiar_categoria(c[7] if c[7] else "")]
-        for c in centros
-        ]
-
-
-    except Exception as ex:
-        print("ERROR SQL:", ex)
-        data['mensaje'] = 'Error'
-        centros = []
-
-    # Mandar centros al HTML
-    return str(centros)
+    return f"DB: {db} | COUNT: {count}"
 
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
