@@ -1,5 +1,7 @@
 # Se importa la clase flask de la propia libreria de flask, 
 # es la clase encargada de levantar la aplicacion, el servidor no funciona sin este importe.
+import os
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -142,7 +144,62 @@ def contacto():
 @app.route("/encuesta")
 def encuesta():
     return render_template("encuesta.html")
-    
+
+
+@app.post("/import-db")
+def import_db():
+    api_key = request.headers.get("X-API-Key")
+    if not api_key or api_key != app.config.get("API_KEY"):
+        return {"error": "Unauthorized: invalid or missing API key"}, 401
+
+    sql_path = os.path.join(os.path.dirname(__file__), "..", "donaciones.sql")
+    sql_path = os.path.abspath(sql_path)
+
+    try:
+        with open(sql_path, "r", encoding="utf-8") as f:
+            sql_content = f.read()
+    except FileNotFoundError:
+        return {"error": f"SQL file not found: {sql_path}"}, 500
+    except Exception as ex:
+        return {"error": f"Failed to read SQL file: {ex}"}, 500
+
+    try:
+        cursor = conexion.connection.cursor()
+
+        # Strip conditional MySQL comments (/*!...*/) and plain comments,
+        # then split on semicolons to get individual statements.
+        # Unwrap /*!...*/ blocks — their content is already handled by stripping
+        sql_content = re.sub(r"/\*!.*?\*/", "", sql_content, flags=re.DOTALL)
+        # Remove -- line comments
+        sql_content = re.sub(r"--[^\n]*", "", sql_content)
+        # Remove /* ... */ block comments
+        sql_content = re.sub(r"/\*.*?\*/", "", sql_content, flags=re.DOTALL)
+
+        statements = [s.strip() for s in sql_content.split(";") if s.strip()]
+
+        executed = 0
+        skipped = 0
+        for stmt in statements:
+            try:
+                cursor.execute(stmt)
+                executed += 1
+            except Exception as stmt_err:
+                # Skip statements that fail (e.g. table already exists)
+                skipped += 1
+                print(f"Skipped statement: {stmt_err}")
+
+        conexion.connection.commit()
+        cursor.close()
+
+        return {
+            "success": True,
+            "message": f"Import complete: {executed} statements executed, {skipped} skipped."
+        }, 200
+
+    except Exception as ex:
+        return {"error": f"Database import failed: {ex}"}, 500
+
+
 if __name__ == "__main__":
     app.register_error_handler(404, pagina_no_encontrada)
     app.run(debug=True)
